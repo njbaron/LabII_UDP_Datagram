@@ -1,6 +1,5 @@
 import sys
 import encrypt
-import decrypt
 import helpers
 
 def big_endian_ip(ip_string):
@@ -26,12 +25,8 @@ for i in range(0, len(keys)):
     data = encrypt.encrypt(keys[i], data)
 
 data_length = len(data)
-padding = len(data) % 4
-if not padding == 0:
-    for i in range(0, padding):
-        data.append(0x00)
 
-total_length = data_length + 20
+total_length = data_length + 20 #adding the length of the header.
 total_length = total_length.to_bytes(2, 'big')
 print(total_length)
 
@@ -44,12 +39,19 @@ packet.append(17)
 packet += total_length
 
 """Creating UDP Header"""
-packet += int(sys.argv[4]).to_bytes(2, 'big')
+packet += int(sys.argv[4]).to_bytes(2, "big")
 packet += int(sys.argv[5]).to_bytes(2, 'big')
 packet += total_length
+packet.append(0x00) #adding space for the checksum value
+packet.append(0x00)
+packet += data
+
+"""Calculating checksum"""
+for i in range(0, len(packet)-2, 2):
+    
 
 
 
 print(packet)
-print(packet[13])
+print(len(packet))
 
