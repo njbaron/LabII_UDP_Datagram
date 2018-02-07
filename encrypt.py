@@ -4,11 +4,6 @@ Description: This program is a 16bit encrypter with an 8 bit key. It takes 16bit
 2 bytes, a and b. The bytes are then encrypted with the function (a,b) = (b,a(XOR)key).
 """
 
-from helpers import read
-from helpers import getKeys
-from decrypt import decrypt
-
-
 def encrypt(key, inString):
     """
     This is the basic encryption function. It encrypts for only one key.
@@ -38,6 +33,3 @@ def encrypt(key, inString):
         outString.append(inString[i] ^ key)
 
     return outString
-
-#key = getKeys("test_keys_0")[0]
-#print(decrypt(key,encrypt(key, read("test_file_0"))))

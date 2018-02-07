@@ -1,4 +1,7 @@
-
+"""
+Author: Nick Baron 830278807
+Description: This is a set of helper methods that can be used for a variety of purposes.
+"""
 
 
 def getKeys(keyFileName, numberKeys = 8):
@@ -49,3 +52,42 @@ def write(file, string):
     f = open(file, "wb") #write bytes
     f.write(string)
     f.close()
+
+def big_endian_ip(ip_string):
+    ip_string_arr = ip_string.split(".")
+    if not len(ip_string_arr) == 4:
+        print("[ERROR] Invalid IP: " + str(ip_string))
+        exit(1)
+    big_endian = bytearray()
+    for i in range(3, -1, -1):
+        big_endian.append(int(ip_string_arr[i]))
+    return big_endian
+
+def ones_add(a, b):
+    b = (b[0] << 8) + b[1]
+    ret_int = a + b
+    print("a: " + str(a))
+    print("b: " + str(b))
+    while ret_int > 0xffff:
+        remainder = ret_int >> 16
+        ret_int = (ret_int & 0xffff) + remainder
+    return ret_int
+
+def check_sum(packet, compliment = True):
+    checksum = 0
+    for i in range(0, len(packet), 2):
+        checksum = ones_add(checksum, packet[i:i + 2])
+    if compliment:
+        checksum = checksum ^ 0xffff
+    print(checksum)
+    return checksum.to_bytes(2, 'big')
+
+def compare_ip(source, read):
+    ret_bool = True
+    for i in range(0, len(source)):
+        try:
+            if not source[i] == read[i]:
+                ret_bool = False
+        except:
+            ret_bool = False
+    return ret_bool

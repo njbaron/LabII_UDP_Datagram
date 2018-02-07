@@ -4,8 +4,6 @@ Description: This program is a 16bit decrypter with an 8 bit key. It takes 16bit
 2 bytes, a and b. The bytes are then decrypted with the function (a,b) = (b(XOR)key,a).s
 """
 
-import sys
-import os
 
 def decrypt(key, inString):
     """
