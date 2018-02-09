@@ -4,14 +4,14 @@ Description: This is a set of helper methods that can be used for a variety of p
 """
 
 
-def getKeys(keyFileName, numberKeys = 8):
+def get_keys(keyFileName, numberKeys = 8):
     """
     This functions retrieves keys from a file.
     :param keyFileName: This is the filename that is supposed to contain the keys.
     :param numberKeys: This is the number of keys that are being requested for encryption.
     :return: This is a bytes array that contains the keys.
     """
-    keys = read(keyFileName)
+    keys = read_file(keyFileName)
 
     if len(keys) > numberKeys:
         print("[WARNING] Found more than " + str(numberKeys) + " keys.")
@@ -26,7 +26,7 @@ def getKeys(keyFileName, numberKeys = 8):
     return keys[:numberKeys]
 
 
-def read(file):
+def read_file(file):
     """
     This functions reads bytes arrays from the fiven file.
     :param file: This is the file that is to be read from.
@@ -40,7 +40,7 @@ def read(file):
     return retStr
 
 
-def write(file, string):
+def write_file(file, string):
     """
     This functions writes bytes array back to a file.
     :param file: This is the file name that is to be written to.
@@ -80,7 +80,7 @@ def check_sum(packet, compliment = True):
     if compliment:
         checksum = checksum ^ 0xffff
     print(checksum)
-    return checksum.to_bytes(2, 'big')
+    return checksum
 
 def compare_ip(source, read):
     ret_bool = True

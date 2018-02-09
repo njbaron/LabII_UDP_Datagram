@@ -4,8 +4,19 @@ Description: This program is a 16bit decrypter with an 8 bit key. It takes 16bit
 2 bytes, a and b. The bytes are then decrypted with the function (a,b) = (b(XOR)key,a).s
 """
 
+def decrypt(keys, inString):
+    """
 
-def decrypt(key, inString):
+    :param keys:
+    :param inString:
+    :return:
+    """
+    for i in range(len(keys) - 1, -1, -1):
+        inString = decrypt_help(keys[i], inString)
+    return inString
+
+
+def decrypt_help(key, inString):
     """
     This is the method that handles decryption for specific keys.
     :param key: This is the 8-bit key that is being decrypted.

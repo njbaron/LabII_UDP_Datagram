@@ -1,50 +1,90 @@
+"""
+
+"""
+
 import sys
-import encrypt
 import helpers
+import encrypt
 
+arg_offset = 0
+encrypting = 0
 
-
-if not len(sys.argv) == 8:
-    print("[ERROR} Command line aruments incorrect.")
-    print("[ERROR] Expecting: \"python sender.py {key file} {input-file} {source-ip} {reciever-ip} {source-port} {destination-port} {datagram-filename}\"")
+if sys.argv[1] == '-e':
+    if not len(sys.argv) == 9:
+        print("[ERROR] FIXME")
+        exit(1)
+    else:
+        encrypting = 1
+        arg_offset = 2
+elif not len(sys.argv) == 7:
+    print("[ERROR] FIXME")
     exit(1)
 
-"""Reading Data"""
-keys = helpers.getKeys(sys.argv[1])
-data = helpers.read(sys.argv[2])
+source_port = int(sys.argv[4 + arg_offset])
+source_port_bytes = source_port.to_bytes(2, 'big')
+dest_port = int(sys.argv[5 + arg_offset])
+dest_port_bytes = dest_port.to_bytes(2, 'big')
 
-for i in range(0, len(keys)):
-    data = encrypt.encrypt(keys[i], data)
+print("Source port: " + str(source_port))
+print("Destination port: " + str(dest_port) + "\n")
 
+source_ip = sys.argv[2 + arg_offset]
+source_ip_bytes = helpers.big_endian_ip(source_ip)
+dest_ip = sys.argv[3 + arg_offset]
+dest_ip_bytes = helpers.big_endian_ip(dest_ip)
+
+print(" Big-endian IP:")
+print("Source IP: " + str((source_ip_bytes[0] << 24) + (source_ip_bytes[1] << 16) + (source_ip_bytes[2] << 8) + source_ip_bytes[3]))
+print("Destination IP: " + str((dest_ip_bytes[0] << 24) + (dest_ip_bytes[1] << 16) + (dest_ip_bytes[2] << 8) + dest_ip_bytes[3]))
+for i in range(0, len(source_ip_bytes)):
+    print("Source IP byte" + str(i) + ": " + str(int(source_ip_bytes[3-i])))
+for i in range(0, len(dest_ip_bytes)):
+    print("Destination IP byte" + str(i) + ": " + str(int(dest_ip_bytes[3-i])))
+
+data = bytearray()
+data += helpers.read_file(sys.argv[1 + arg_offset])
+if encrypting:
+    keys = helpers.get_keys(sys.argv[2])
+    data = encrypt.encrypt(keys, data)
 data_length = len(data)
-total_length = data_length + 20 #adding the length of the header.
-print(total_length)
-total_length = total_length.to_bytes(2, 'big')
+if data_length % 2: # Is the string an even number of bytes? If no add a 3 bytes.
+        data += encrypting.to_bytes(encrypting, 'big')
 
-"""Creating psuedo header"""
+print("file size(Byte, without zero padding) " + str(data_length))
+total_length = data_length + 8
+total_length_bytes = total_length.to_bytes(2, 'big')
+print("total length(bytes): " + str(total_length))
+
 packet = bytearray()
-packet += helpers.big_endian_ip(sys.argv[3])
-packet += helpers.big_endian_ip(sys.argv[4])
-packet += int(0).to_bytes(1, 'big')
-packet += int(17).to_bytes(1, 'big')
-packet += total_length
+"""Psuedo Header"""
+packet += source_ip_bytes
+packet += dest_ip_bytes
+packet += int(17).to_bytes(2, 'big')
+packet += total_length_bytes
 
-"""Creating UDP Header"""
-packet += int(sys.argv[5]).to_bytes(2, "big")
-packet += int(sys.argv[6]).to_bytes(2, 'big')
-packet += total_length
-packet += int(0).to_bytes(1, 'big') #adding space for the checksum value
-packet += int(0).to_bytes(1, 'big')
+"""UDP Header"""
+packet += source_port_bytes
+packet += dest_port_bytes
+packet += total_length_bytes
+packet += int(0).to_bytes(2, 'big') #Checksum placeholder
+
 packet += data
 
 """Calculating checksum"""
-checksum = helpers.check_sum(packet)
-packet[18] = checksum[0]
-packet[19] = checksum[1]
+check_sum = helpers.check_sum(packet)
+check_sum_bytes = check_sum.to_bytes(2, 'big')
+packet[18] = check_sum_bytes[0]
+packet[19] = check_sum_bytes[1]
+print("checksum: " + hex(check_sum)[2:])
 
 """Writing to file"""
-helpers.write(sys.argv[7], packet)
+try:
+    helpers.write_file(sys.argv[6 + arg_offset], packet[12:])
+    print("File is succesfully written to datagram!")
+except:
+    print("File is unsuccesfully written to datagram!")
 
-print(packet)
-print(len(packet))
+
+
+
 

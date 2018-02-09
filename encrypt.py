@@ -4,7 +4,18 @@ Description: This program is a 16bit encrypter with an 8 bit key. It takes 16bit
 2 bytes, a and b. The bytes are then encrypted with the function (a,b) = (b,a(XOR)key).
 """
 
-def encrypt(key, inString):
+def encrypt(keys, inString):
+    """
+
+    :param keys:
+    :param inString:
+    :return:
+    """
+    for i in range(0, len(keys)):
+        inString = encrypt_help(keys[i], inString)
+    return inString
+
+def encrypt_help(key, inString):
     """
     This is the basic encryption function. It encrypts for only one key.
     :param key: This is the 8-bit key.
