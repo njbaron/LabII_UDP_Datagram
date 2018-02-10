@@ -6,11 +6,16 @@ Description: This program is a 16bit encrypter with an 8 bit key. It takes 16bit
 
 def encrypt(keys, inString):
     """
-
-    :param keys:
-    :param inString:
-    :return:
+    This is a function that takes a string of keys and encrypts the inString for all the keys.
+    :param keys: This is the bytes array of keys that will be used.
+    :param inString: This is the string that is too be encrypted.
+    :return: This is the encrypted string.
     """
+
+    if len(inString) < 1:
+        print("[WARNING] String given to encrypt was found to be empty.")
+        return inString
+
     for i in range(0, len(keys)):
         inString = encrypt_help(keys[i], inString)
     return inString
@@ -22,10 +27,6 @@ def encrypt_help(key, inString):
     :param inString: This is the bytes array that is to be encrypted.
     :return: This is the encrypted bytes array.
     """
-
-    if len(inString) < 1:
-        print("[WARNING] String given to encrypt was found to be empty.")
-        return inString
 
     print("[LOG} Encrypt with key: " + chr(key))
     outString = bytearray()

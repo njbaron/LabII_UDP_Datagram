@@ -32,11 +32,16 @@ def read_file(file):
     :param file: This is the file that is to be read from.
     :return: This is the bytes array containing all the information from the file.
     """
-
     print("[LOG] Reading file: " + file)
-    f = open(file, "rb") #read bytes
-    retStr = f.read()
-    f.close()
+
+    try:
+        f = open(file, "rb") #read bytes
+        retStr = f.read()
+        f.close()
+    except:
+        print("[ERROR] Cannot open file: " + file)
+        exit(1)
+
     return retStr
 
 
@@ -47,13 +52,22 @@ def write_file(file, string):
     :param string: This is the information that is to be written to the file.
     :return: Nothing useful.
     """
-
     print("[LOG] Writing file: " + file)
-    f = open(file, "wb") #write bytes
-    f.write(string)
-    f.close()
+
+    try:
+        f = open(file, "wb") #write bytes
+        f.write(string)
+        f.close()
+    except:
+        print("[ERROR] Cannot write file: " + file)
+        exit(1)
 
 def big_endian_ip(ip_string):
+    """
+    This function calculates a big endian form IP address from a string.
+    :param ip_string: This is an input string that contains an IP address in the form of: "192.168.1.104"
+    :return: This returns a bytearray of the big endian information.
+    """
     ip_string_arr = ip_string.split(".")
     if not len(ip_string_arr) == 4:
         print("[ERROR] Invalid IP: " + str(ip_string))
@@ -61,33 +75,33 @@ def big_endian_ip(ip_string):
     big_endian = bytearray()
     for i in range(3, -1, -1):
         big_endian.append(int(ip_string_arr[i]))
+
     return big_endian
 
 def ones_add(a, b):
+    """
+    This function adds two 16 bit numbers and returns a 16 bit number that has any overflow added back in.
+    :param a: This is an int.
+    :param b: This is a bytearray of length 2.
+    :return: This is a 16 bit integer.
+    """
     b = (b[0] << 8) + b[1]
     ret_int = a + b
-    print("a: " + str(a))
-    print("b: " + str(b))
     while ret_int > 0xffff:
         remainder = ret_int >> 16
         ret_int = (ret_int & 0xffff) + remainder
     return ret_int
 
 def check_sum(packet, compliment = True):
+    """
+    This function calulates a check sum of a passed packet.
+    :param packet: This is a bytearray of even length.
+    :param compliment: This is parameter that if TRUE will make the output the compliment of its self.
+    :return: This is the final checksum of the packet.
+    """
     checksum = 0
     for i in range(0, len(packet), 2):
         checksum = ones_add(checksum, packet[i:i + 2])
     if compliment:
         checksum = checksum ^ 0xffff
-    print(checksum)
     return checksum
-
-def compare_ip(source, read):
-    ret_bool = True
-    for i in range(0, len(source)):
-        try:
-            if not source[i] == read[i]:
-                ret_bool = False
-        except:
-            ret_bool = False
-    return ret_bool
