@@ -1,6 +1,3 @@
-# LabII_UDP_Datagram
-This is a program that will encrypt and decrypt data and append a UDP datagram header. 
-
 ECE 456 UDP Datagram Sender/ Reciever Lab 2
 By Nick Baron 830278807
 
