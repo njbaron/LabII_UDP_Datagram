@@ -20,6 +20,7 @@ def encrypt(keys, inString):
         inString = encrypt_help(keys[i], inString)
     return inString
 
+
 def encrypt_help(key, inString):
     """
     This is the basic encryption function. It encrypts for only one key.
@@ -36,9 +37,6 @@ def encrypt_help(key, inString):
         inString.append(0x00)
         inString.append(0x00)
         inString.append(0x03)
-    else:
-        inString.append(0x00)
-        inString.append(0x02)
 
     for i in range(0, len(inString)-1, 2):
         outString.append(inString[i+1])

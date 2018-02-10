@@ -38,9 +38,7 @@ def decrypt_help(key, inString):
         outString.append(inString[i])
 
     if outString[len(outString)-2] == 0x00:
-        if outString[len(outString)-1] == 0x02: # Is there a buffer? If so remove it.
-            outString = outString[:-2]
-        elif outString[len(outString)-1] == 0x03:
+        if outString[len(outString)-1] == 0x03:
             outString = outString[:-3]
     else:
         print("[LOG] Didn't find any part that indicates padding.")
