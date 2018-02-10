@@ -3,7 +3,6 @@ Author: Nick Baron 830278807
 Description: This is a set of helper methods that can be used for a variety of purposes.
 """
 
-
 def get_keys(keyFileName, numberKeys = 8):
     """
     This functions retrieves keys from a file.

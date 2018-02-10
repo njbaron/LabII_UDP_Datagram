@@ -37,6 +37,7 @@ def encrypt_help(key, inString):
         inString.append(0x00)
         inString.append(0x00)
         inString.append(0x03)
+        print("[LOG] Encrypter adding padding.")
 
     for i in range(0, len(inString)-1, 2):
         outString.append(inString[i+1])
