@@ -1,0 +1,4 @@
+source ip:      192.168.52.4
+dest ip:        192.168.35.10
+source port:    2300
+dest port:      23540
